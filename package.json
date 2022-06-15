@@ -1,0 +1,13 @@
+{
+  "name": "create-sprinklr-app",
+  "version": "1.0.1",
+  "description": "create-sprinklr-app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "create-sprinklr-app": "./src/index.sh"
+  },
+  "license": "ISC"
+}
