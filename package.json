@@ -1,7 +1,7 @@
 {
-  "name": "create-sprinklr-app",
+  "name": "@sprinklr/create-sprinklr-app",
   "version": "1.0.1",
-  "description": "create-sprinklr-app",
+  "description": "A CLI tool to bootstrap a Sprinklr App that can be installed as an external app in Sprinklr Platform",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,5 +9,8 @@
   "bin": {
     "create-sprinklr-app": "./src/index.sh"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "np": "^7.6.1"
+  }
 }
