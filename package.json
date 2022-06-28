@@ -1,6 +1,6 @@
 {
   "name": "@sprinklr-engineering/create-sprinklr-app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A CLI tool to bootstrap a Sprinklr App that can be installed as an external app in Sprinklr Platform",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,5 @@
     "create-sprinklr-app": "./src/index.sh"
   },
   "license": "ISC",
-  "devDependencies": {
-    "np": "^7.6.1"
-  }
+  "files": ["src/index.sh"]
 }
