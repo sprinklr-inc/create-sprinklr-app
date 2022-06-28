@@ -1,5 +1,5 @@
 {
-  "name": "@sprinklr/create-sprinklr-app",
+  "name": "@sprinklr-engineering/create-sprinklr-app",
   "version": "1.0.1",
   "description": "A CLI tool to bootstrap a Sprinklr App that can be installed as an external app in Sprinklr Platform",
   "main": "index.js",
