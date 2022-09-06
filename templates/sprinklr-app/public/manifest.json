@@ -1,17 +1,9 @@
 {
-  "appName": "Example",
-  "pages": [
-    {
-      "title": "Page Example",
-      "id": "page-example",
-      "url": "/pages/page-example"
-    }
+  "applicationId": "my-app",
+  "name": "My App",
+  "version": "1",
+  "pages": [    
   ],
-  "widgets": [
-    {
-      "title": "Widget Example",
-      "id": "widget-example",
-      "url": "/record-page-widget/widget-example"
-    }
+  "widgets": [   
   ]
 }
