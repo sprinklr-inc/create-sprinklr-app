@@ -45,6 +45,6 @@
   },
   "license": "MIT",
   "files": [
-    "src/index.sh"
+    "dist"
   ]
 }
