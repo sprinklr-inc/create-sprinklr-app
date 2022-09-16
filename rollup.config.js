@@ -3,6 +3,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
+import shebang from 'rollup-plugin-preserve-shebang';
 
 export default {
   input: './index.ts',
@@ -13,6 +14,7 @@ export default {
   },
   plugins: [
     nodeResolve(),
+    shebang(),
     commonjs(),
     json(),
     esbuild({
