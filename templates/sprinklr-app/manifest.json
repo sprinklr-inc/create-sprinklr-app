@@ -1,7 +1,6 @@
 {
   "applicationId": "<%=appId%>",
   "name": "<%=appName%>",
-  "pages": [],
   "widgets": [
     {
       "id": "hello-world",
