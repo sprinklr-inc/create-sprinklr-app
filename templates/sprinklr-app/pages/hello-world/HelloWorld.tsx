@@ -1,16 +1,20 @@
 import type { NextPage } from 'next';
-import SprClient from '@sprinklrjs/app-sdk';
-import { useEffect, useState } from 'react';
+import SprClientSdk from '@sprinklrjs/app-sdk';
+import { useEffect, useState, useRef } from 'react';
 import Head from 'next/head';
 
 const HelloWorld: NextPage = () => {
-  const [sdkClient, setSdkClient] = useState<SprClient>();
+  const [isClientInitialized, setIsClientInitialzed] = useState<boolean>(false);
+  const sprClientRef = useRef<SprClientSdk>();
 
+  //Initialize SDK
   useEffect(() => {
     const initSdk = async () => {
-      const sprClient = new SprClient();
-      await sprClient.init();
-      setSdkClient(sdkClient);
+      if (!sprClientRef.current) {
+        const sprClient = new SprClientSdk();
+        sprClientRef.current = sprClient;
+        setIsClientInitialzed(true);
+      }
     };
     initSdk();
   }, []);
@@ -21,7 +25,7 @@ const HelloWorld: NextPage = () => {
         <title>Hello World</title>
       </Head>
       <main>
-        <div id="app">{sdkClient ? 'Hello World' : 'Loading...'}</div>
+        <div id="app">{isClientInitialized ? 'Hello World' : 'Loading...'}</div>
       </main>
     </>
   );
