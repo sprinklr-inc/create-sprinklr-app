@@ -221,7 +221,7 @@ export async function createApp({
     /**
      * Default dependencies.
      */
-    const dependencies = ['react', 'react-dom', 'next'];
+    const dependencies = ['react', 'react-dom', 'next', '@sprinklrjs/app-sdk'];
     /**
      * Default devDependencies.
      */
