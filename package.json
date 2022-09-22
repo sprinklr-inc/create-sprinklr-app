@@ -1,6 +1,6 @@
 {
   "name": "@sprinklrjs/create-sprinklr-app",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A CLI tool to bootstrap a Sprinklr App that can be installed as an external app in Sprinklr Platform",
   "scripts": {
     "build": "rimraf dist && NODE_ENV=production rollup -c rollup.config.js",
