@@ -1,6 +1,6 @@
 {
-  "applicationId": "<%=appId%>",
   "name": "<%=appName%>",
+  "version": "0.1.0",
   "widgets": [
     {
       "id": "hello-world",
