@@ -31,4 +31,4 @@ const HelloWorld: NextPage = () => {
   );
 };
 
-export { HelloWorld };
+export default HelloWorld;
