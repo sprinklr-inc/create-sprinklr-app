@@ -208,6 +208,7 @@ export async function createApp({
         build: 'next build',
         start: 'next start',
         lint: 'next lint',
+        export: 'next build && next export && cp manifest.json out/',
       },
     };
     /**
