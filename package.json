@@ -6,9 +6,7 @@
     "build": "rimraf dist && NODE_ENV=production rollup -c rollup.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "bin": {
-    "create-sprinklr-app": "./dist/index.js"
-  },
+  "bin": "./dist/index.js",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
     "@rollup/plugin-json": "^4.1.0",

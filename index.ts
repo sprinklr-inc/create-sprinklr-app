@@ -5,7 +5,7 @@ import Commander from 'commander';
 import path from 'path';
 import prompts from 'prompts';
 import checkForUpdate from 'update-check';
-import { createApp, DownloadError } from './create-app';
+import { createApp, DownloadError } from './createApp';
 import { getPkgManager } from './helpers/get-pkg-manager';
 import { validateNpmName } from './helpers/validate-pkg';
 import packageJson from './package.json';
