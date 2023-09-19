@@ -38,7 +38,7 @@ export async function createApp({
   typescript?: boolean;
 }): Promise<void> {
   //let repoInfo: RepoInfo | undefined
-  const template = 'sprinklr-app';
+  const template = 'sprinklr/iframe';
 
   // if (example) {
   //   let repoUrl: URL | undefined
