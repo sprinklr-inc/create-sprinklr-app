@@ -1,0 +1,47 @@
+import { readdirSync, statSync  } from 'fs';
+import { build } from 'vite';
+import { resolve } from 'path';
+import react from '@vitejs/plugin-react';
+
+const BASE_PATH = resolve(process.cwd(),'src/components');
+
+const components = readdirSync(BASE_PATH).filter(function (folder) {
+  return statSync(resolve(BASE_PATH, folder)).isDirectory();
+});
+
+components.forEach(async componentName => {
+  console.log(`Building ${componentName}`);
+  try {
+    await build({
+      plugins: [react()],  
+      build:{
+        watch: process.env.NODE_ENV === 'dev',
+        emptyOutDir: false,
+        chunkSizeWarningLimit: 300,
+        outDir: `./out/${componentName}`,
+        lib: {
+          entry: resolve(BASE_PATH, `${componentName}/index.ts`),
+          name: 'MyComponent',
+          formats: ['iife'],
+          fileName(format, name) {
+            return `${name}.js`;
+          },
+        },
+        rollupOptions: {
+          external: [
+            'react',
+            'react-dom'
+          ],
+          output: {
+            globals: {
+              react: 'window.React',      
+              'react-dom': 'window.ReactDOM',      
+            },
+          },
+        }
+        },
+    })
+  } catch(error) {
+    console.log(`Error while building ${componentName}`, error);
+  }
+})
