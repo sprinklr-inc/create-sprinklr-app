@@ -1,0 +1,11 @@
+{
+  "name": "<%=appName%>",
+  "version": "0.1.0",
+  "widgets": [
+    {
+      "id": "hello-world",
+      "title": "Hello World",
+      "url": "/hello-world"
+    }
+  ]
+}
