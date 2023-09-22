@@ -22,23 +22,21 @@ import { getOnline } from './helpers/is-online';
 import { isWriteable } from './helpers/is-writeable';
 import type { PackageManager } from './helpers/get-pkg-manager';
 
-export class DownloadError extends Error {}
+export class DownloadError extends Error { }
 
 export async function createApp({
   appPath,
+  appType,
   packageManager,
   example,
-  examplePath,
-  typescript,
 }: {
   appPath: string;
+  appType: string;
   packageManager: PackageManager;
   example?: string;
-  examplePath?: string;
-  typescript?: boolean;
 }): Promise<void> {
   //let repoInfo: RepoInfo | undefined
-  const template = 'sprinklr/iframe';
+  const template = appType === "iFrame" ? 'sprinklr/iframe' : 'sprinklr/react-component';
 
   // if (example) {
   //   let repoUrl: URL | undefined
@@ -125,7 +123,6 @@ export async function createApp({
 
   process.chdir(root);
 
-  const packageJsonPath = path.join(root, 'package.json');
   let hasPackageJson = false;
 
   if (example) {
@@ -199,73 +196,74 @@ export async function createApp({
     /**
      * Create a package.json for the new project.
      */
-    const packageJson = {
-      name: appName,
-      version: '0.1.0',
-      private: true,
-      scripts: {
-        dev: 'next dev',
-        build: 'next build',
-        start: 'next start',
-        lint: 'next lint',
-        export: 'next build && next export && cp manifest.json out/',
-      },
-    };
+    // const packageJson = {
+    //   name: appName,
+    //   version: '0.1.0',
+    //   private: true,
+    //   scripts: {
+    //     dev: 'next dev',
+    //     build: 'next build',
+    //     start: 'next start',
+    //     lint: 'next lint',
+    //     export: 'next build && next export && cp manifest.json out/',
+    //   },
+    // };
     /**
      * Write it to disk.
      */
-    fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(packageJson, null, 2) + os.EOL);
+    // fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(packageJson, null, 2) + os.EOL);
     /**
      * These flags will be passed to `install()`.
      */
-    const installFlags = { packageManager, isOnline };
+
     /**
      * Default dependencies.
      */
-    const dependencies = ['react', 'react-dom', 'next', '@sprinklrjs/app-sdk'];
+    // const dependenciesObject = packageJson.dependencies
+    // const dependencies = Object.keys(dependenciesObject);
     /**
      * Default devDependencies.
      */
-    const devDependencies = ['eslint', 'eslint-config-next'];
-    /**
-     * TypeScript projects will have type definitions and other devDependencies.
-     */
+    // const devDependenciesObject = packageJson.devDependencies;
+    // const devDependencies = Object.keys(devDependenciesObject);
 
-    devDependencies.push('typescript', '@types/react', '@types/node', '@types/react-dom');
     /**
      * Install package.json dependencies if they exist.
      */
-    if (dependencies.length) {
-      console.log();
-      console.log('Installing dependencies:');
-      for (const dependency of dependencies) {
-        console.log(`- ${chalk.cyan(dependency)}`);
-      }
-      console.log();
+    // if (dependencies.length) {
+    //   console.log();
+    //   console.log('Installing dependencies:');
+    //   for (const dependency of dependencies) {
+    //     console.log(`- ${chalk.cyan(dependency)}`);
+    //   }
+    //   console.log();
 
-      await install(root, dependencies, installFlags);
-    }
+    //   await install(root, installFlags);
+    // }
     /**
      * Install package.json devDependencies if they exist.
      */
-    if (devDependencies.length) {
-      console.log();
-      console.log('Installing devDependencies:');
-      for (const devDependency of devDependencies) {
-        console.log(`- ${chalk.cyan(devDependency)}`);
-      }
-      console.log();
+    // if (devDependencies.length) {
+    //   console.log();
+    //   console.log('Installing devDependencies:');
+    //   for (const devDependency of devDependencies) {
+    //     console.log(`- ${chalk.cyan(devDependency)}`);
+    //   }
+    //   console.log();
 
-      const devInstallFlags = { devDependencies: true, ...installFlags };
-      await install(root, devDependencies, devInstallFlags);
-    }
-    console.log();
+    //   const devInstallFlags = { devDependencies: true, ...installFlags };
+    //   // await install(root, devDependencies, devInstallFlags);
+    // }
+    // console.log();
     /**
      * Copy the template files to the target directory.
      */
+
     console.log('Copying template');
     console.log(path.join(__dirname));
     console.log(path.join(root));
+
+    // Comment
     await cpy('**', root, {
       parents: true,
       cwd: path.join(__dirname, 'templates', template),
@@ -286,6 +284,25 @@ export async function createApp({
         }
       },
     });
+
+    // Build the package.json file
+    console.log('Setting up package.json file');
+    const targetPackageFile = path.join(__dirname, 'templates', template, 'package.json');
+    const targetJSON = fs.readFileSync(targetPackageFile, { encoding: "utf-8" });
+    const parsedJSON = ejs.render(targetJSON, { appName })
+
+    /**
+     * Write it to disk.
+     */
+    fs.writeFileSync(path.join(root, 'package.json'), parsedJSON);
+    console.log("Done");
+
+
+    const installFlags = { packageManager, isOnline };
+    console.log("Installing Dependencies and devDependencies")
+    await install(installFlags)
+    console.log("Done")
+
 
     //Copy Manifest file
     console.log('Setting up manifest.json file');

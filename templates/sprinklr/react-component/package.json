@@ -1,5 +1,5 @@
 {
-  "name": "vite-custom-component-poc",
+  "name": "<%=appName%>",
   "private": true,
   "version": "0.0.0",
   "type": "module",

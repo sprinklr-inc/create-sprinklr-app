@@ -12,10 +12,7 @@ interface InstallArgs {
    * Indicate whether there is an active Internet connection.
    */
   isOnline: boolean
-  /**
-   * Indicate whether the given dependencies are devDependencies.
-   */
-  devDependencies?: boolean
+
 }
 
 /**
@@ -24,18 +21,10 @@ interface InstallArgs {
  * @returns A Promise that resolves once the installation is finished.
  */
 export function install(
-  root: string,
-  dependencies: string[] | null,
-  { packageManager, isOnline, devDependencies }: InstallArgs
+  // root: string,
+  { packageManager, isOnline }: InstallArgs
 ): Promise<void> {
-  /**
-   * (p)npm-specific command-line flags.
-   */
-  const npmFlags: string[] = []
-  /**
-   * Yarn-specific command-line flags.
-   */
-  const yarnFlags: string[] = []
+
   /**
    * Return a Promise that resolves once the installation is finished.
    */
@@ -44,52 +33,24 @@ export function install(
     let command = packageManager
     const useYarn = packageManager === 'yarn'
 
-    if (dependencies && dependencies.length) {
-      /**
-       * If there are dependencies, run a variation of `{packageManager} add`.
-       */
-      if (useYarn) {
-        /**
-         * Call `yarn add --exact (--offline)? (-D)? ...`.
-         */
-        args = ['add', '--exact']
-        if (!isOnline) args.push('--offline')
-        args.push('--cwd', root)
-        if (devDependencies) args.push('--dev')
-        args.push(...dependencies)
-      } else {
-        /**
-         * Call `(p)npm install [--save|--save-dev] ...`.
-         */
-        args = ['install', '--save-exact']
-        args.push(devDependencies ? '--save-dev' : '--save')
-        args.push(...dependencies)
-      }
-    } else {
-      /**
-       * If there are no dependencies, run a variation of `{packageManager}
-       * install`.
-       */
-      args = ['install']
-      if (!isOnline) {
-        console.log(chalk.yellow('You appear to be offline.'))
-        if (useYarn) {
-          console.log(chalk.yellow('Falling back to the local Yarn cache.'))
-          console.log()
-          args.push('--offline')
-        } else {
-          console.log()
-        }
-      }
-    }
+
     /**
-     * Add any package manager-specific flags.
+     * The package.json file is already there.
+     * So just run a variation of `{packageManager} install`.
      */
-    if (useYarn) {
-      args.push(...yarnFlags)
-    } else {
-      args.push(...npmFlags)
+    args = ['install']
+
+    if (!isOnline) {
+      console.log(chalk.yellow('You appear to be offline.'))
+      if (useYarn) {
+        console.log(chalk.yellow('Falling back to the local Yarn cache.'))
+        console.log()
+        args.push('--offline')
+      } else {
+        console.log()
+      }
     }
+
     /**
      * Spawn the installation process.
      */
