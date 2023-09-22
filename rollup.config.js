@@ -13,7 +13,10 @@ export default {
     format: 'cjs',
   },
   plugins: [
-    nodeResolve(),
+    nodeResolve({
+      exportConditions: ['node'], // add node option here,
+      preferBuiltins: false,
+    }),
     shebang(),
     commonjs(),
     json(),
