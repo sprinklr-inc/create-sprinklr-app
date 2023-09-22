@@ -76,7 +76,6 @@ async function run(): Promise<void> {
     await createApp({
       appPath: resolvedProjectPath,
       packageManager,
-      example: example && example !== 'default' ? example : undefined,
       appType: projectType,
     });
   } catch (reason) {

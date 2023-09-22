@@ -22,7 +22,7 @@ import { getOnline } from './helpers/is-online';
 import { isWriteable } from './helpers/is-writeable';
 import type { PackageManager } from './helpers/get-pkg-manager';
 
-export class DownloadError extends Error { }
+export class DownloadError extends Error {}
 
 export async function createApp({
   appPath,
@@ -36,7 +36,7 @@ export async function createApp({
   example?: string;
 }): Promise<void> {
   //let repoInfo: RepoInfo | undefined
-  const template = appType === "iFrame" ? 'sprinklr/iframe' : 'sprinklr/react-component';
+  const template = appType === 'iFrame' ? 'sprinklr/iframe' : 'sprinklr/react-component';
 
   // if (example) {
   //   let repoUrl: URL | undefined
@@ -125,195 +125,66 @@ export async function createApp({
 
   let hasPackageJson = false;
 
-  if (example) {
-    /**
-     * If an example repository is provided, clone it.
-     */
-    // try {
-    //   if (repoInfo) {
-    //     const repoInfo2 = repoInfo
-    //     console.log(
-    //       `Downloading files from repo ${chalk.cyan(
-    //         example
-    //       )}. This might take a moment.`
-    //     )
-    //     console.log()
-    //     await retry(() => downloadAndExtractRepo(root, repoInfo2), {
-    //       retries: 3,
-    //     })
-    //   } else {
-    //     console.log(
-    //       `Downloading files for example ${chalk.cyan(
-    //         example
-    //       )}. This might take a moment.`
-    //     )
-    //     console.log()
-    //     await retry(() => downloadAndExtractExample(root, example), {
-    //       retries: 3,
-    //     })
-    //   }
-    // } catch (reason) {
-    //   function isErrorLike(err: unknown): err is { message: string } {
-    //     return (
-    //       typeof err === 'object' &&
-    //       err !== null &&
-    //       typeof (err as { message?: unknown }).message === 'string'
-    //     )
-    //   }
-    //   throw new DownloadError(
-    //     isErrorLike(reason) ? reason.message : reason + ''
-    //   )
-    // }
-    // // Copy our default `.gitignore` if the application did not provide one
-    // const ignorePath = path.join(root, '.gitignore')
-    // if (!fs.existsSync(ignorePath)) {
-    //   fs.copyFileSync(
-    //     path.join(__dirname, 'templates', template, 'gitignore'),
-    //     ignorePath
-    //   )
-    // }
-    // // Copy default `next-env.d.ts` to any example that is typescript
-    // const tsconfigPath = path.join(root, 'tsconfig.json')
-    // if (fs.existsSync(tsconfigPath)) {
-    //   fs.copyFileSync(
-    //     path.join(__dirname, 'templates', 'typescript', 'next-env.d.ts'),
-    //     path.join(root, 'next-env.d.ts')
-    //   )
-    // }
-    // hasPackageJson = fs.existsSync(packageJsonPath)
-    // if (hasPackageJson) {
-    //   console.log('Installing packages. This might take a couple of minutes.')
-    //   console.log()
-    //   await install(root, null, { packageManager, isOnline })
-    //   console.log()
-    // }
-  } else {
-    /**
-     * Otherwise, if an example repository is not provided for cloning, proceed
-     * by installing from a template.
-     */
-    console.log(chalk.bold(`Using ${packageManager}.`));
-    /**
-     * Create a package.json for the new project.
-     */
-    // const packageJson = {
-    //   name: appName,
-    //   version: '0.1.0',
-    //   private: true,
-    //   scripts: {
-    //     dev: 'next dev',
-    //     build: 'next build',
-    //     start: 'next start',
-    //     lint: 'next lint',
-    //     export: 'next build && next export && cp manifest.json out/',
-    //   },
-    // };
-    /**
-     * Write it to disk.
-     */
-    // fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(packageJson, null, 2) + os.EOL);
-    /**
-     * These flags will be passed to `install()`.
-     */
+  /**
+   * Start the template installation part
+   */
+  console.log(chalk.bold(`Using ${packageManager}.`));
 
-    /**
-     * Default dependencies.
-     */
-    // const dependenciesObject = packageJson.dependencies
-    // const dependencies = Object.keys(dependenciesObject);
-    /**
-     * Default devDependencies.
-     */
-    // const devDependenciesObject = packageJson.devDependencies;
-    // const devDependencies = Object.keys(devDependenciesObject);
+  /**
+   * Copy the template files to the target directory.
+   */
 
-    /**
-     * Install package.json dependencies if they exist.
-     */
-    // if (dependencies.length) {
-    //   console.log();
-    //   console.log('Installing dependencies:');
-    //   for (const dependency of dependencies) {
-    //     console.log(`- ${chalk.cyan(dependency)}`);
-    //   }
-    //   console.log();
+  console.log('Copying template');
+  console.log(path.join(__dirname));
+  console.log(path.join(root));
 
-    //   await install(root, installFlags);
-    // }
-    /**
-     * Install package.json devDependencies if they exist.
-     */
-    // if (devDependencies.length) {
-    //   console.log();
-    //   console.log('Installing devDependencies:');
-    //   for (const devDependency of devDependencies) {
-    //     console.log(`- ${chalk.cyan(devDependency)}`);
-    //   }
-    //   console.log();
-
-    //   const devInstallFlags = { devDependencies: true, ...installFlags };
-    //   // await install(root, devDependencies, devInstallFlags);
-    // }
-    // console.log();
-    /**
-     * Copy the template files to the target directory.
-     */
-
-    console.log('Copying template');
-    console.log(path.join(__dirname));
-    console.log(path.join(root));
-
-    // Comment
-    await cpy('**', root, {
-      parents: true,
-      cwd: path.join(__dirname, 'templates', template),
-      rename: name => {
-        switch (name) {
-          case 'gitignore':
-          case 'eslintrc.json': {
-            return '.'.concat(name);
-          }
-          // README.md is ignored by webpack-asset-relocator-loader used by ncc:
-          // https://github.com/vercel/webpack-asset-relocator-loader/blob/e9308683d47ff507253e37c9bcbb99474603192b/src/asset-relocator.js#L227
-          case 'README-template.md': {
-            return 'README.md';
-          }
-          default: {
-            return name;
-          }
+  await cpy('**', root, {
+    parents: true,
+    cwd: path.join(__dirname, 'templates', template),
+    rename: name => {
+      switch (name) {
+        case 'gitignore':
+        case 'eslintrc.json':
+        case 'yarnrc.yml': {
+          return '.'.concat(name);
         }
-      },
-    });
+        // README.md is ignored by webpack-asset-relocator-loader used by ncc:
+        // https://github.com/vercel/webpack-asset-relocator-loader/blob/e9308683d47ff507253e37c9bcbb99474603192b/src/asset-relocator.js#L227
+        case 'README-template.md': {
+          return 'README.md';
+        }
+        default: {
+          return name;
+        }
+      }
+    },
+  });
 
-    // Build the package.json file
-    console.log('Setting up package.json file');
-    const targetPackageFile = path.join(__dirname, 'templates', template, 'package.json');
-    const targetJSON = fs.readFileSync(targetPackageFile, { encoding: "utf-8" });
-    const parsedJSON = ejs.render(targetJSON, { appName })
+  /**
+   * Build the package.json file and write it to the app folder
+   */
+  console.log('Setting up package.json file');
+  const targetPackageFile = path.join(__dirname, 'templates', template, 'package.json');
+  const targetJSON = fs.readFileSync(targetPackageFile, { encoding: 'utf-8' });
+  const parsedJSON = ejs.render(targetJSON, { appName });
 
-    /**
-     * Write it to disk.
-     */
-    fs.writeFileSync(path.join(root, 'package.json'), parsedJSON);
-    console.log("Done");
+  fs.writeFileSync(path.join(root, 'package.json'), parsedJSON);
+  console.log('Done');
 
+  const installFlags = { packageManager, isOnline };
+  console.log('Installing Dependencies and devDependencies');
+  await install(installFlags);
+  console.log('Done');
 
-    const installFlags = { packageManager, isOnline };
-    console.log("Installing Dependencies and devDependencies")
-    await install(installFlags)
-    console.log("Done")
-
-
-    //Copy Manifest file
-    console.log('Setting up manifest.json file');
-    const contents = fs.readFileSync(path.join(root, 'manifest.json'), { encoding: 'utf-8' });
-    const parsedContent = ejs.render(contents, { appId: appName.split(' ').join('-'), appName }, {});
-    /**
-     * Write it to disk.
-     */
-    fs.writeFileSync(path.join(root, 'manifest.json'), parsedContent);
-    console.log('Done');
-  }
+  //Copy Manifest file
+  console.log('Setting up manifest.json file');
+  const contents = fs.readFileSync(path.join(root, 'manifest.json'), { encoding: 'utf-8' });
+  const parsedContent = ejs.render(contents, { appId: appName.split(' ').join('-'), appName }, {});
+  /**
+   * Write it to disk.
+   */
+  fs.writeFileSync(path.join(root, 'manifest.json'), parsedContent);
+  console.log('Done');
 
   if (tryGitInit(root)) {
     console.log('Initialized a git repository.');

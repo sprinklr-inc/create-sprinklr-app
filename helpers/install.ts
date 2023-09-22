@@ -1,18 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import chalk from 'chalk'
-import spawn from 'cross-spawn'
-import type { PackageManager } from './get-pkg-manager'
+import chalk from 'chalk';
+import spawn from 'cross-spawn';
+import type { PackageManager } from './get-pkg-manager';
 
 interface InstallArgs {
   /**
    * Indicate whether to install packages using npm, pnpm or Yarn.
    */
-  packageManager: PackageManager
+  packageManager: PackageManager;
   /**
    * Indicate whether there is an active Internet connection.
    */
-  isOnline: boolean
-
+  isOnline: boolean;
 }
 
 /**
@@ -20,34 +19,29 @@ interface InstallArgs {
  *
  * @returns A Promise that resolves once the installation is finished.
  */
-export function install(
-  // root: string,
-  { packageManager, isOnline }: InstallArgs
-): Promise<void> {
-
+export function install({ packageManager, isOnline }: InstallArgs): Promise<void> {
   /**
    * Return a Promise that resolves once the installation is finished.
    */
   return new Promise((resolve, reject) => {
-    let args: string[]
-    let command = packageManager
-    const useYarn = packageManager === 'yarn'
-
+    let args: string[];
+    let command = packageManager;
+    const useYarn = packageManager === 'yarn';
 
     /**
      * The package.json file is already there.
      * So just run a variation of `{packageManager} install`.
      */
-    args = ['install']
+    args = ['install'];
 
     if (!isOnline) {
-      console.log(chalk.yellow('You appear to be offline.'))
+      console.log(chalk.yellow('You appear to be offline.'));
       if (useYarn) {
-        console.log(chalk.yellow('Falling back to the local Yarn cache.'))
-        console.log()
-        args.push('--offline')
+        console.log(chalk.yellow('Falling back to the local Yarn cache.'));
+        console.log();
+        args.push('--offline');
       } else {
-        console.log()
+        console.log();
       }
     }
 
@@ -64,13 +58,13 @@ export function install(
         NODE_ENV: 'development',
         DISABLE_OPENCOLLECTIVE: '1',
       },
-    })
-    child.on('close', (code) => {
+    });
+    child.on('close', code => {
       if (code !== 0) {
-        reject({ command: `${command} ${args.join(' ')}` })
-        return
+        reject({ command: `${command} ${args.join(' ')}` });
+        return;
       }
-      resolve()
-    })
-  })
+      resolve();
+    });
+  });
 }
