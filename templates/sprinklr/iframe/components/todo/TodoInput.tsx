@@ -30,9 +30,7 @@ export const TodoInput = ({
     <Textarea
       value={text ?? ''}
       className={className}
-      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-        setText(e.target.value.replace('\n', ''));
-      }}
+      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value.replace('\n', ''))}
       size="sm"
       variant="line"
       placeholder={placeholder}

@@ -36,9 +36,7 @@ export const TodoItem = ({ value, onSave }: Props) => (
       text={value?.description ?? ''}
       className={value?.status === STATUS.COMPLETED ? 'line-through' : ''}
       overrides={TODO_INPUT_OVERRIDES}
-      onSave={(description: string | undefined) => {
-        onSave({ ...value, description });
-      }}
+      onSave={(description: string | undefined) => onSave({ ...value, description })}
       shouldSaveOnBlur
     />
   </Box>
