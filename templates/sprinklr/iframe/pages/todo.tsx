@@ -1,9 +1,14 @@
-import type { NextPage } from 'next';
+import dynamic from 'next/dynamic';
 import SprClientSdk from '@sprinklrjs/app-sdk';
 import { useEffect, useState, useRef } from 'react';
 import Head from 'next/head';
 
-const HelloWorld: NextPage = () => {
+//types
+import type { NextPage } from 'next';
+
+const Todo = dynamic(() => import('../components/todo'), { ssr: false });
+
+const TodoPage: NextPage = () => {
   const [isClientInitialized, setIsClientInitialzed] = useState<boolean>(false);
   const sprClientRef = useRef<SprClientSdk>();
 
@@ -22,13 +27,13 @@ const HelloWorld: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Hello World</title>
+        <title>Todo List</title>
       </Head>
       <main>
-        <div id="app">{isClientInitialized ? 'Hello World' : 'Loading...'}</div>
+        <Todo />
       </main>
     </>
   );
 };
 
-export default HelloWorld;
+export default TodoPage;
