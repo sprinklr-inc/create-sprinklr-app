@@ -12,24 +12,19 @@ const TodoPage: NextPage = () => {
   const [isClientInitialized, setIsClientInitialzed] = useState<boolean>(false);
   const sprClientRef = useRef<SprClientSdk>();
 
-  if (!sprClientRef.current) {
-    const sprClient = new SprClientSdk();
-    sprClientRef.current = sprClient;
-  }
+  //Initialize SDK
+  useEffect(() => {
+    const initSdk = async () => {
+      if (!sprClientRef.current) {
+        const sprClient = new SprClientSdk();
+        sprClientRef.current = sprClient;
+        setIsClientInitialzed(true);
+      }
+    };
+    initSdk();
+  }, []);
 
-  // //Initialize SDK
-  // useEffect(() => {
-  //   const initSdk = async () => {
-  //     if (!sprClientRef.current) {
-  //       const sprClient = new SprClientSdk();
-  //       sprClientRef.current = sprClient;
-  //       setIsClientInitialzed(true);
-  //     }
-  //   };
-  //   initSdk();
-  // }, []);
-
-  return {
+  return (
     <>
       <Head>
         <title>Todo List</title>
@@ -38,7 +33,7 @@ const TodoPage: NextPage = () => {
         <Todo />
       </main>
     </>
-  }
+  );
 };
 
 export default TodoPage;

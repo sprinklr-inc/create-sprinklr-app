@@ -16,8 +16,8 @@
     "@sprinklrjs/app-sdk": "^0.1.8"
   },
   "devDependencies": {
-    "@sprinklrjs/spaceweb": "12.14.4",
-    "@sprinklrjs/spaceweb-themes": "12.14.4",
+    "@sprinklrjs/spaceweb": "12.33.2",
+    "@sprinklrjs/spaceweb-themes": "12.33.2",
     "@types/node": "20.6.3",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
