@@ -145,6 +145,7 @@ export async function createApp({
       switch (name) {
         case 'gitignore':
         case 'eslintrc.json':
+        case 'prettierrc':
         case 'yarnrc.yml': {
           return '.'.concat(name);
         }
