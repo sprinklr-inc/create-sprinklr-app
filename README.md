@@ -13,11 +13,13 @@ This will prompt you for some information needed to bootstrap the application. O
   "name": "my-custom-app",
   "version": "0.1.0",
   "basePath": "http://localhost:3000",
+  "integrationType": "VIRTUALIZED",
   "widgets": [
     {
-      "id": "hello-world",
-      "title": "Hello World",
-      "url": "/hello-world"
+      "id": "todo",
+      "title": "Todo List",
+      "url": "/todo",
+      "scopes": ["RECORD_PAGE"]
     }
   ]
 }
@@ -35,7 +37,7 @@ Current version of the application. Sprinklr follows [semantic versioning](https
 
 #### `basePath`
 
-Optional parameter indicating the base URL from where the application is being served. While developing your application set this to `localhost` to quickly test your changes. This can also be used if you want to self host your application from a custom domain.
+Optional parameter indicating the base URL from where the application is being served. This is useful while developing your application to quickly test your compoents.
 
 #### `widgets`
 
@@ -43,9 +45,10 @@ Array of the custom components to be added. Each component config object looks s
 
 ```json
 {
-  "id": "hello-world",
-  "title": "Hello World",
-  "url": "/hello-world",
+  "id": "todo",
+  "title": "Todo List",
+  "url": "/todo",
+  "scopes": ["RECORD_PAGE"],
   "props": {
     "height": "500px"
   }
@@ -58,14 +61,17 @@ Id of the custom component.
 `title`
 Name of the component.
 
-`Url`
+`url`
 Relative url of the component. This is appended to the basePath of where the application is hosted, to render the custom component.
+
+`scopes`
+In what areas of application to surface this component. Currently only RECORD_PAGE is supported.
 
 `props`
 Properties to be passed to the component. For eg to set a fixed height for your component pass the height props as follows
 
 ```json
 "props": {
-        "height": "500px"
-    }
+  "height": "500px"
+}
 ```

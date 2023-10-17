@@ -1,11 +1,14 @@
 {
   "name": "<%=appName%>",
   "version": "0.1.0",
+  "basePath": "http://localhost:3000",
+  "integrationType": "VIRTUALIZED",
   "widgets": [
     {
-      "id": "hello-world",
-      "title": "Hello World",
-      "url": "/hello-world"
+      "id": "todo",
+      "title": "Todo List",
+      "url": "/todo",
+      "scopes": ["RECORD_PAGE"]
     }
   ]
 }
