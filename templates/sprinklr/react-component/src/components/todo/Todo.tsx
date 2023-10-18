@@ -14,7 +14,7 @@ const DEFAULT_TODOS: Array<TodoType> = [
   { description: "Resolve the Customer's ticket" },
 ];
 
-export const Todo = () => {
+export const Todo = ({ sdk }) => {
   const [todos, setTodos] = useState<Array<TodoType>>(DEFAULT_TODOS);
 
   const onEdit = ({ todo, index }: { todo: TodoType; index: number }) =>
