@@ -17,8 +17,8 @@ components.forEach(async componentName => {
         'process.env.NODE_ENV': process.env.DEV_MODE === 'true' ? '"dev"' : '"production"',
       },
       plugins: [react()],
-      sourcemap: process.env.DEV_MODE === 'true' ? 'inline' : false,
       build: {
+        sourcemap: process.env.DEV_MODE === 'true' ? 'inline' : false,
         watch: process.env.DEV_MODE === 'true',
         emptyOutDir: false,
         chunkSizeWarningLimit: 300,
