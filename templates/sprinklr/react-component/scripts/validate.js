@@ -3,26 +3,26 @@ import { resolve } from 'path';
 
 const errors = [];
 
-function errorMessage(field, type){
+function errorMessage(field, type) {
   return `Value of field '${field}' should be a non-empty ${type}`;
 }
 
-function validateWidget(config) {
-  const requiredFields = ['id', 'title', 'url', 'scopes'];
-  const optionalFields = ['props'];
-
+function checkRedundantFields(config, requiredFields, optionalFields) {
   Object.entries(config).forEach(([key]) => {
     if (!requiredFields.includes(key) && !optionalFields.includes(key)) {
-      errors.push(`Field '${key}' is not allowed in widget config`);
+      errors.push(`Field '${key}' is not allowed`);
     }
   });
+}
 
+function validateRequiredFields(config, requiredFields, isWidget = false) {
   requiredFields.forEach(field => {
     if (!(field in config)) {
-      errors.push(`Field '${field}' is required in widget config`);
+      errors.push(`Field '${field}' is required`);
     }
 
-    if (field === 'scopes') {
+    const iterableField = isWidget ? 'scopes' : 'widgets';
+    if (field === iterableField) {
       if (!(typeof config[field] === 'object' && config[field].length)) {
         errors.push(errorMessage(field, 'array'));
       }
@@ -30,6 +30,14 @@ function validateWidget(config) {
       errors.push(errorMessage(field, 'string'));
     }
   });
+}
+
+function validateWidget(config) {
+  const requiredFields = ['id', 'title', 'url', 'scopes'];
+  const optionalFields = ['props'];
+
+  checkRedundantFields(config, requiredFields, optionalFields);
+  validateRequiredFields(config, requiredFields, true);
 
   optionalFields.forEach(field => {
     if (config[field] && !(typeof config[field] === 'object' && Object.keys(config[field]).length)) {
@@ -47,37 +55,21 @@ function validateWidget(config) {
   const config = JSON.parse(readFileSync(path));
 
   try {
-    Object.entries(config).forEach(([key]) => {
-      if (!requiredFields.includes(key) && !optionalFields.includes(key)) {
-        errors.push(`Field '${key}' is not allowed in manifest.json`);
-      }
-    });
+    checkRedundantFields(config, requiredFields, optionalFields);
+    validateRequiredFields(config, requiredFields);
 
-    requiredFields.forEach(field => {
-      if (!(field in config)) {
-        errors.push(`Field '${field}' is required in manifest.json`);
-      }
-
-      if (field === 'widgets') {
-        if (!(typeof config[field] === 'object' && config[field].length)) {
-          errors.push(errorMessage(field, 'array'));
-        }
-        config.widgets.forEach(widget => {
-          validateWidget(widget);
-        });
-      } else if (!(typeof config[field] === 'string' && config[field])) {
-        errors.push(errorMessage(field, 'string'));
-      }
+    config.widgets?.forEach(widget => {
+      validateWidget(widget);
     });
   } catch (error) {
     console.log(error);
     process.exit(1);
   }
 
-  if(errors.length){
+  if (errors.length) {
     errors.forEach(error => {
       console.log(`Validation Error: ${error}`);
-    })
+    });
     process.exit(1);
   }
 })();
