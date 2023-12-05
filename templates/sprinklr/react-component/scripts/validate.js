@@ -11,7 +11,7 @@ function validateWidget(config) {
     }
   });
 
-  requiredFields.map(field => {
+  requiredFields.forEach(field => {
     if (!(field in config)) {
       throw new Error(`field '${field}' is required in widget config`);
     }
@@ -25,7 +25,7 @@ function validateWidget(config) {
     }
   });
 
-  optionalFields.map(field => {
+  optionalFields.forEach(field => {
     if (config[field] && !(typeof config[field] === 'object')) {
       throw new Error(`value of field '${field}' should be an object`);
     }
@@ -47,7 +47,7 @@ function validateWidget(config) {
       }
     });
 
-    requiredFields.map(field => {
+    requiredFields.forEach(field => {
       if (!(field in config)) {
         throw new Error(`field '${field}' is required in manifest.json`);
       }
@@ -56,7 +56,7 @@ function validateWidget(config) {
         if (!(typeof config[field] === 'object' && config[field].length)) {
           throw new Error(`value of field '${field}' should be a non-empty array`);
         }
-        config.widgets.map(widget => {
+        config.widgets.forEach(widget => {
           validateWidget(widget);
         });
       } else if (!(typeof config[field] === 'string' && config[field])) {
