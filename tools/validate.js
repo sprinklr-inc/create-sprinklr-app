@@ -1,10 +1,17 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
+const INTEGRATION_TYPES = ['VIRTUALIZED', 'CONTAINERIZED'];
+
 const manifestErrorMessage = (field, type) => `Value of field '${field}' should be a non-empty ${type}`;
 
 const errorMessage = ({ title, field, type, isWidget }) =>
   `Value of field ${field} should be a non-empty ${type} in ${isWidget ? 'widget' : 'page'} "${title}"`;
+
+const isUrlValid = url => {
+  const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+  return urlRegex.test(url);
+};
 
 const validateProps = props => {
   const errors = [`Value of field props should be an object`];
@@ -57,6 +64,8 @@ const validateManifestRequiredFields = (config, requiredFields) =>
   requiredFields.reduce((acc, field) => {
     if (!(field in config)) {
       acc.push(`Field '${field}' is required in manifest object`);
+    } else if (field === 'integrationType' && !INTEGRATION_TYPES.includes(config[field])) {
+      acc.push(`Field ${field} should be one of ${INTEGRATION_TYPES}`);
     } else if (!(typeof config[field] === 'string' && config[field])) {
       acc.push(manifestErrorMessage(field, 'string'));
     }
@@ -66,7 +75,11 @@ const validateManifestRequiredFields = (config, requiredFields) =>
 
 const validateManifestOptionalFields = (config, optionalFields) =>
   optionalFields.reduce((acc, field) => {
-    if (field !== 'basePath' && config[field] && !Array.isArray(config[field])) {
+    if (field === 'basePath') {
+      if (field in config && !(typeof config[field] === 'string' && isUrlValid(config[field]))) {
+        acc.push(`Field ${field} should be a valid url`);
+      }
+    } else if (config[field] && !Array.isArray(config[field])) {
       acc.push(manifestErrorMessage(field, 'array'));
     }
 

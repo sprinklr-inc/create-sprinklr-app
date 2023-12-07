@@ -146,7 +146,8 @@ export async function createApp({
         case 'gitignore':
         case 'eslintrc.json':
         case 'prettierrc':
-        case 'yarnrc.yml': {
+        case 'yarnrc.yml':
+        case 'babelrc': {
           return '.'.concat(name);
         }
         // README.md is ignored by webpack-asset-relocator-loader used by ncc:
@@ -159,6 +160,11 @@ export async function createApp({
         }
       }
     },
+  });
+
+  await cpy('**', path.join(root, 'scripts'), {
+    parents: true,
+    cwd: path.join(__dirname, 'tools'),
   });
 
   /**

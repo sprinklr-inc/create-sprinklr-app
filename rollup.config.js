@@ -32,6 +32,10 @@ export default {
           src: 'templates/*',
           dest: 'dist/templates',
         },
+        {
+          src: 'tools/*',
+          dest: 'dist/tools',
+        },
       ],
     }),
   ],
