@@ -1,12 +1,24 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-const errorMessage = (field, type) => `Value of field '${field}' should be a non-empty ${type}`;
+const manifestErrorMessage = (field, type) => `Value of field '${field}' should be a non-empty ${type}`;
 
-const checkRedundantFields = ({ config, requiredFields, optionalFields }) =>
+const errorMessage = ({ title, field, type, isWidget }) =>
+  `Value of field ${field} should be a non-empty ${type} in ${isWidget ? 'widget' : 'page'} "${title}"`;
+
+const validateProps = props => {
+  const errors = [`Value of field props should be an object`];
+  return props && !(typeof props === 'object') ? errors : [];
+};
+
+const checkRedundantFields = ({ config, requiredFields, optionalFields, isWidget }) =>
   Object.entries(config).reduce((acc, [key]) => {
     if (!requiredFields.includes(key) && !optionalFields.includes(key)) {
-      acc.push(`Field '${key}' is not allowed`);
+      acc.push(
+        `Field '${key}' should be removed from ${
+          isWidget !== undefined ? `${isWidget ? 'widget' : 'page'} "${config.title}"` : 'manifest object'
+        }`
+      );
     }
     return acc;
   }, []);
@@ -14,40 +26,56 @@ const checkRedundantFields = ({ config, requiredFields, optionalFields }) =>
 const validateRequiredFields = ({ config, requiredFields, isWidget }) =>
   requiredFields.reduce((acc, field) => {
     if (!(field in config)) {
-      acc.push(`Field '${field}' is required`);
-    }
-
-    const iterableField = isWidget ? 'scopes' : 'widgets';
-    if (field === iterableField) {
-      if (!(typeof config[field] === 'object' && config[field].length)) {
-        acc.push(errorMessage(field, 'array'));
+      acc.push(`Field '${field}' is required in ${isWidget ? 'widget' : 'page'} "${config.title}"`);
+    } else if (field === 'scopes') {
+      if (!(Array.isArray(config[field]) && config[field].length)) {
+        acc.push(errorMessage({ title: config.title, field, type: 'array', isWidget }));
       }
     } else if (!(typeof config[field] === 'string' && config[field])) {
-      acc.push(errorMessage(field, 'string'));
+      acc.push(errorMessage({ title: config.title, field, type: 'string', isWidget }));
     }
 
     return acc;
   }, []);
 
-const validateWidget = config => {
-  const requiredFields = ['id', 'title', 'url', 'scopes'];
+const validateComponent = (config, isWidget) => {
+  const requiredFields = ['id', 'title', 'url'];
   const optionalFields = ['props'];
 
+  if (isWidget) {
+    requiredFields.push('scopes');
+  }
+
   return [
-    ...checkRedundantFields({ config, requiredFields, optionalFields }),
-    ...validateRequiredFields({ config, requiredFields, isWidget: true }),
-    ...optionalFields.reduce((acc, field) => {
-      if (config[field] && !(typeof config[field] === 'object' && Object.keys(config[field]).length)) {
-        acc.push(errorMessage(field, 'object'));
-      }
-      return acc;
-    }, []),
+    ...checkRedundantFields({ config, requiredFields, optionalFields, isWidget }),
+    ...validateRequiredFields({ config, requiredFields, isWidget }),
+    ...validateProps(config.props),
   ];
 };
 
+const validateManifestRequiredFields = (config, requiredFields) =>
+  requiredFields.reduce((acc, field) => {
+    if (!(field in config)) {
+      acc.push(`Field '${field}' is required in manifest object`);
+    } else if (!(typeof config[field] === 'string' && config[field])) {
+      acc.push(manifestErrorMessage(field, 'string'));
+    }
+
+    return acc;
+  }, []);
+
+const validateManifestOptionalFields = (config, optionalFields) =>
+  optionalFields.reduce((acc, field) => {
+    if (config[field] && !Array.isArray(config[field])) {
+      acc.push(manifestErrorMessage(field, 'array'));
+    }
+
+    return acc;
+  }, []);
+
 const isManifestValid = () => {
-  const requiredFields = ['name', 'version', 'widgets', 'integrationType'];
-  const optionalFields = ['basePath'];
+  const requiredFields = ['name', 'version', 'integrationType'];
+  const optionalFields = ['widgets', 'pages'];
 
   console.log('Validating manifest.json...');
   const path = resolve(process.cwd(), 'manifest.json');
@@ -55,9 +83,14 @@ const isManifestValid = () => {
 
   const errors = [
     ...checkRedundantFields({ config, requiredFields, optionalFields }),
-    ...validateRequiredFields({ config, requiredFields, isWidget: false }),
-    ...(config.widgets || []).reduce((acc, widget) => {
-      acc.push(...validateWidget(widget));
+    ...validateManifestRequiredFields(config, requiredFields),
+    ...validateManifestOptionalFields(config, optionalFields),
+    ...(Array.isArray(config.widgets) ? config.widgets : []).reduce((acc, widget) => {
+      acc.push(...validateComponent(widget, true));
+      return acc;
+    }, []),
+    ...(Array.isArray(config.pages) ? config.pages : []).reduce((acc, page) => {
+      acc.push(...validateComponent(page, false));
       return acc;
     }, []),
   ];
