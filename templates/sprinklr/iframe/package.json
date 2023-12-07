@@ -7,11 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build && next export && cp manifest.json out/"
+    "export": "next build && next export && cp manifest.json out/",
+    "validate": "node ./scripts/validate.js",
+    "publish": "yarn validate && yarn build && node ./scripts/zip.js"
   },
   "dependencies": {
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "archiver": "^6.0.1",
     "next": "13.5.2",
     "@sprinklrjs/app-sdk": "^0.1.8"
   },
