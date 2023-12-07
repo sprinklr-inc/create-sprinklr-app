@@ -66,7 +66,7 @@ const validateManifestRequiredFields = (config, requiredFields) =>
 
 const validateManifestOptionalFields = (config, optionalFields) =>
   optionalFields.reduce((acc, field) => {
-    if (config[field] && !Array.isArray(config[field])) {
+    if (field !== 'basePath' && config[field] && !Array.isArray(config[field])) {
       acc.push(manifestErrorMessage(field, 'array'));
     }
 
@@ -75,7 +75,7 @@ const validateManifestOptionalFields = (config, optionalFields) =>
 
 const isManifestValid = () => {
   const requiredFields = ['name', 'version', 'integrationType'];
-  const optionalFields = ['widgets', 'pages'];
+  const optionalFields = ['basePath', 'widgets', 'pages'];
 
   console.log('Validating manifest.json...');
   const path = resolve(process.cwd(), 'manifest.json');
