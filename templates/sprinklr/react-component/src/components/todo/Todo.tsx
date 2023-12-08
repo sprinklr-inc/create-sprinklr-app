@@ -45,6 +45,7 @@ export const Todo = ({ sdk }) => {
             />
           ))}
         </Box>
+        <p className="test-class">Hello World</p>
       </Box>
     </SpacewebProvider>
   );
