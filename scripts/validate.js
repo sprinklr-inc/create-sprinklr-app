@@ -1,7 +1,16 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-const INTEGRATION_TYPES = ['VIRTUALIZED', 'CONTAINERIZED'];
+const appType = '<%=appType%>';
+
+const INTEGRATION_TYPES = { 'React Component': 'VIRTUALIZED', iFrame: 'CONTAINERIZED' };
+
+const reduntantFieldErrorMessage = ({ field, title, isWidget }) => {
+  if (isWidget !== undefined) {
+    return `Field ${field} not supported in ${isWidget ? 'widget' : 'page'} "${title}"`;
+  }
+  return `Field ${field} not supported in manifest object`;
+};
 
 const manifestErrorMessage = (field, type) => `Value of field '${field}' should be a non-empty ${type}`;
 
@@ -13,19 +22,15 @@ const isUrlValid = url => {
   return urlRegex.test(url);
 };
 
-const validateProps = props => {
-  const errors = [`Value of field props should be an object`];
+const validateProps = ({ props, title, isWidget }) => {
+  const errors = [`Value of field props should be an object in ${isWidget ? 'widget' : 'page'} "${title}"`];
   return props && !(typeof props === 'object') ? errors : [];
 };
 
 const checkRedundantFields = ({ config, requiredFields, optionalFields, isWidget }) =>
   Object.entries(config).reduce((acc, [key]) => {
     if (!requiredFields.includes(key) && !optionalFields.includes(key)) {
-      acc.push(
-        `Field '${key}' should be removed from ${
-          isWidget !== undefined ? `${isWidget ? 'widget' : 'page'} "${config.title}"` : 'manifest object'
-        }`
-      );
+      acc.push(reduntantFieldErrorMessage({ field: key, title: config.title, isWidget }));
     }
     return acc;
   }, []);
@@ -56,7 +61,7 @@ const validateComponent = (config, isWidget) => {
   return [
     ...checkRedundantFields({ config, requiredFields, optionalFields, isWidget }),
     ...validateRequiredFields({ config, requiredFields, isWidget }),
-    ...validateProps(config.props),
+    ...validateProps({ props: config.props, title: config.title, isWidget }),
   ];
 };
 
@@ -64,8 +69,8 @@ const validateManifestRequiredFields = (config, requiredFields) =>
   requiredFields.reduce((acc, field) => {
     if (!(field in config)) {
       acc.push(`Field '${field}' is required in manifest object`);
-    } else if (field === 'integrationType' && !INTEGRATION_TYPES.includes(config[field])) {
-      acc.push(`Field ${field} should be one of ${INTEGRATION_TYPES}`);
+    } else if (field === 'integrationType' && config[field] !== INTEGRATION_TYPES[appType]) {
+      acc.push(`Field ${field} must be ${INTEGRATION_TYPES[appType]}`);
     } else if (!(typeof config[field] === 'string' && config[field])) {
       acc.push(manifestErrorMessage(field, 'string'));
     }
@@ -113,9 +118,9 @@ const isManifestValid = () => {
       console.log(`Validation Error: ${error}`);
     });
     process.exit(1);
-  } else {
-    console.log(`Successfully validated!`);
   }
+
+  console.log(`Successfully validated!`);
 };
 
 isManifestValid();

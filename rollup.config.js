@@ -33,8 +33,8 @@ export default {
           dest: 'dist/templates',
         },
         {
-          src: 'tools/*',
-          dest: 'dist/tools',
+          src: 'scripts/*',
+          dest: 'dist/scripts',
         },
       ],
     }),

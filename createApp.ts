@@ -164,8 +164,14 @@ export async function createApp({
 
   await cpy('**', path.join(root, 'scripts'), {
     parents: true,
-    cwd: path.join(__dirname, 'tools'),
+    cwd: path.join(__dirname, 'scripts'),
   });
+
+  const targetValidateFile = path.join(__dirname, 'scripts', 'validate.js');
+  const targetFile = fs.readFileSync(targetValidateFile, { encoding: 'utf-8' });
+  const parsedFile = ejs.render(targetFile, { appType });
+
+  fs.writeFileSync(path.join(root, 'scripts', 'validate.js'), parsedFile);
 
   /**
    * Build the package.json file and write it to the app folder
