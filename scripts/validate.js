@@ -32,7 +32,7 @@ const validateProps = ({ props, title, isWidget }) => {
 };
 
 const checkRedundantFields = ({ config, requiredFields, optionalFields, isWidget }) =>
-  Object.entries(config).reduce((acc, [key]) => {
+  Object.keys(config).reduce((acc, key) => {
     if (!requiredFields.includes(key) && !optionalFields.includes(key)) {
       acc.push(reduntantFieldErrorMessage({ field: key, title: config.title, isWidget }));
     }
