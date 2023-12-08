@@ -1,9 +1,13 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { APP_TYPE, INTEGRATION_TYPE } from './constants.js';
 
 const appType = '<%=appType%>';
 
-const INTEGRATION_TYPES = { 'React Component': 'VIRTUALIZED', iFrame: 'CONTAINERIZED' };
+const APP_TYPE_VS_INT_TYPE = {
+  [APP_TYPE.REACT_COMPONENT]: INTEGRATION_TYPE.VIRTUALIZED,
+  [APP_TYPE.IFRAME]: INTEGRATION_TYPE.CONTAINERIZED,
+};
 
 const reduntantFieldErrorMessage = ({ field, title, isWidget }) => {
   if (isWidget !== undefined) {
@@ -39,12 +43,23 @@ const validateRequiredFields = ({ config, requiredFields, isWidget }) =>
   requiredFields.reduce((acc, field) => {
     if (!(field in config)) {
       acc.push(`Field '${field}' is required in ${isWidget ? 'widget' : 'page'} "${config.title}"`);
-    } else if (field === 'scopes') {
-      if (!(Array.isArray(config[field]) && config[field].length)) {
-        acc.push(errorMessage({ title: config.title, field, type: 'array', isWidget }));
-      }
-    } else if (!(typeof config[field] === 'string' && config[field])) {
-      acc.push(errorMessage({ title: config.title, field, type: 'string', isWidget }));
+    }
+
+    switch (field) {
+      case 'id':
+      case 'title':
+      case 'url':
+        if (!(typeof config[field] === 'string' && config[field])) {
+          acc.push(errorMessage({ title: config.title, field, type: 'string', isWidget }));
+        }
+        break;
+      case 'scopes':
+        if (!(Array.isArray(config[field]) && config[field].length)) {
+          acc.push(errorMessage({ title: config.title, field, type: 'array', isWidget }));
+        }
+        break;
+      default:
+        break;
     }
 
     return acc;
@@ -69,23 +84,43 @@ const validateManifestRequiredFields = (config, requiredFields) =>
   requiredFields.reduce((acc, field) => {
     if (!(field in config)) {
       acc.push(`Field '${field}' is required in manifest object`);
-    } else if (field === 'integrationType' && config[field] !== INTEGRATION_TYPES[appType]) {
-      acc.push(`Field ${field} must be ${INTEGRATION_TYPES[appType]}`);
-    } else if (!(typeof config[field] === 'string' && config[field])) {
-      acc.push(manifestErrorMessage(field, 'string'));
+    }
+
+    switch (field) {
+      case 'name':
+      case 'version':
+        if (!(typeof config[field] === 'string' && config[field])) {
+          acc.push(manifestErrorMessage(field, 'string'));
+        }
+        break;
+      case 'integrationType':
+        if (config[field] !== APP_TYPE_VS_INT_TYPE[appType]) {
+          acc.push(`Field ${field} must be ${APP_TYPE_VS_INT_TYPE[appType]}`);
+        }
+        break;
+      default:
+        break;
     }
 
     return acc;
   }, []);
 
-const validateManifestOptionalFields = (config, optionalFields) =>
-  optionalFields.reduce((acc, field) => {
-    if (field === 'basePath') {
-      if (field in config && !(typeof config[field] === 'string' && isUrlValid(config[field]))) {
-        acc.push(`Field ${field} should be a valid url`);
-      }
-    } else if (config[field] && !Array.isArray(config[field])) {
-      acc.push(manifestErrorMessage(field, 'array'));
+const validateManifestOptionalFields = config =>
+  Object.entries(config).reduce((acc, [key, value]) => {
+    switch (key) {
+      case 'basePath':
+        if (!isUrlValid(value)) {
+          acc.push(`Field ${key} should be a valid url`);
+        }
+        break;
+      case 'widgets':
+      case 'pages':
+        if (!Array.isArray(value)) {
+          acc.push(manifestErrorMessage(key, 'array'));
+        }
+        break;
+      default:
+        break;
     }
 
     return acc;
@@ -102,7 +137,7 @@ const isManifestValid = () => {
   const errors = [
     ...checkRedundantFields({ config, requiredFields, optionalFields }),
     ...validateManifestRequiredFields(config, requiredFields),
-    ...validateManifestOptionalFields(config, optionalFields),
+    ...validateManifestOptionalFields(config),
     ...(Array.isArray(config.widgets) ? config.widgets : []).reduce((acc, widget) => {
       acc.push(...validateComponent(widget, true));
       return acc;
