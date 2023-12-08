@@ -11,7 +11,8 @@
     "@sprinklrjs/spaceweb": "12.33.2",
     "@sprinklrjs/spaceweb-themes": "12.33.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "vite-plugin-css-injected-by-js": "^3.3.0"
   },
   "devDependencies": {
     "@types/react": "18.2.22",
