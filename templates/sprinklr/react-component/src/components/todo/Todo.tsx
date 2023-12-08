@@ -5,6 +5,7 @@ import SpacewebProvider from '@sprinklrjs/spaceweb/spacewebProvider';
 import { Box } from '@sprinklrjs/spaceweb/box';
 import { TodoItem } from './TodoItem';
 import { TodoInput } from './TodoInput';
+import '../styles.css';
 
 import { Todo as TodoType, STATUS } from './types';
 
@@ -44,6 +45,7 @@ export const Todo = ({ sdk }) => {
             />
           ))}
         </Box>
+        <p className="test-class">Hello World</p>
       </Box>
     </SpacewebProvider>
   );
