@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { isManifestValid } from './helpers';
+import { isManifestValid } from './helpers.js';
 
 const appType = '<%=appType%>';
 
