@@ -7,11 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build && next export && cp manifest.json out/"
+    "export": "next build && next export && cp manifest.json out/",
+    "validate": "babel-node ./scripts/validate.js",
+    "publish": "yarn validate && yarn export && babel-node ./scripts/zip.js"
   },
   "dependencies": {
+    "@babel/core": "^7.23.5",
+    "@babel/node": "^7.22.19",
+    "@babel/preset-env": "^7.23.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "archiver": "^6.0.1",
     "next": "13.5.2",
     "@sprinklrjs/app-sdk": "^0.1.8"
   },

@@ -1,7 +1,8 @@
 {
   "name": "<%=appName%>",
   "version": "0.1.0",
-  "widgets": [
+  "integrationType": "CONTAINERIZED",
+  "pages": [
     {
       "id": "to-do",
       "title": "To Do",
